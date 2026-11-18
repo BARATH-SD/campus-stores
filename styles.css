@@ -369,3 +369,40 @@ body > main {
     min-height: 44px;
   }
 }
+
+/* Request tracker improvements */
+
+#campus-stores .tracker-card {
+  margin-bottom: 14px;
+  padding: 15px;
+  border-radius: 7px;
+}
+
+#campus-stores .tracker-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+#campus-stores .tracker-summary span {
+  color: var(--quiet);
+  font-size: 12px;
+}
+
+#campus-stores .tracker-progress {
+  height: 7px;
+  background: var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 8px 0 12px;
+}
+
+#campus-stores .tracker-progress-fill {
+  height: 100%;
+  background: #299b70;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}

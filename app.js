@@ -87,6 +87,7 @@
     ["Requests", "clipboard-list"],
     ["Inventory", "package"],
     ["Loan register", "book-open"],
+    ["Request tracker", "clipboard-list"],
     ["Desk book", "messages-square"],
   ];
   const original = () => ({
@@ -333,10 +334,91 @@
       '<form data-note><div class="form"><label class="full"><span>Note for the next shift</span><textarea name="note" rows="2" maxlength="400" required></textarea></label></div><button type="submit">Add handover note</button></form>'
     );
   }
+  function requestTracker() {
+    let html = head(
+      "Request-wise equipment tracker",
+      "Track issued, returned and outstanding equipment"
+    );
+
+    for (const r of requests) {
+      const items = r.items.map((type) => {
+        const loan = s.loans.find(
+          (l) =>
+            l.req === r.id &&
+            getAsset(l.asset).type === type
+        );
+
+        return {
+          type,
+          loan,
+          status: !loan
+            ? "Not issued"
+            : loan.back
+              ? "Returned"
+              : "Outstanding",
+        };
+      });
+
+      const returned = items.filter(
+        (item) => item.status === "Returned"
+      ).length;
+
+      const issued = items.filter(
+        (item) => item.loan
+      ).length;
+
+      const progress = Math.round(
+        (returned / items.length) * 100
+      );
+
+      html +=
+        '<div class="record tracker-card">' +
+        '<h3>' + esc(r.id) + " · " + esc(r.event) + "</h3>" +
+        '<p>' + esc(r.club) + " · " + esc(r.owner) + "</p>" +
+        '<p><b>Return deadline:</b> ' + esc(r.due) + "</p>" +
+        '<div class="tracker-summary">' +
+        "<strong>" + returned + " / " + items.length +
+        " items returned</strong>" +
+        "<span>" + issued + " items issued</span>" +
+        "</div>" +
+        '<div class="tracker-progress">' +
+        '<div class="tracker-progress-fill" style="width:' +
+        progress + '%"></div></div>' +
+        items.map((item) =>
+          row(
+            item.type,
+            item.loan
+              ? item.loan.asset + " · " + item.loan.who
+              : "Not yet issued",
+            badge(
+              item.status,
+              item.status === "Returned"
+            )
+          )
+        ).join("") +
+        "</div>";      
+        items.map((item) =>
+          row(
+            item.type,
+            item.loan
+              ? item.loan.asset + " · " + item.loan.who
+              : "Not yet issued",
+            badge(
+              item.status,
+              item.status === "Returned"
+            )
+          )
+        ).join("") +
+        "</div>";
+    }
+
+    return html;
+  }
   const screens = {
     Requests: requestPage,
     Inventory: inventory,
     "Loan register": register,
+    "Request tracker": requestTracker,
     "Desk book": deskbook,
   };
   function paint() {
